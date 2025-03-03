@@ -324,7 +324,7 @@ class CsvLib
         {
             while (!feof($fileHandle))
             {
-                $lineArray = fgetcsv($fileHandle, 0, $delimiter, $enclosure, "" );
+                $lineArray = fgetcsv($fileHandle, 0, $delimiter, $enclosure, "");
                 
                 if (!empty($lineArray))
                 {
@@ -435,8 +435,8 @@ class CsvLib
         {
             while (!feof($fileHandle1))
             {
-                $lineArray1 = fgetcsv($fileHandle1, 0, $delimiter, $enclosure, "" );
-                $lineArray2 = fgetcsv( $fileHandle2, 0, $delimiter, $enclosure, "" );
+                $lineArray1 = fgetcsv($fileHandle1, 0, $delimiter, $enclosure, "");
+                $lineArray2 = fgetcsv($fileHandle2, 0, $delimiter, $enclosure, "");
                 $resultArray = array();
                 
                 if ($lineArray1)
@@ -641,7 +641,7 @@ class CsvLib
                 
                 if ($copyLineAcross)
                 {
-                    fputcsv($outputFileHandle, $fields, $delimiter, $enclosure, "" );
+                    fputcsv($outputFileHandle, $fields, $delimiter, $enclosure, "");
                 }
             }
             
