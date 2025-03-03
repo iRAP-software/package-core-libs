@@ -456,7 +456,7 @@ class HtmlGenerator
      * what the fields represent.
      * 
      * @param name  - the name of the fild (name we use to get value from GET / POST)
-     * @param type  - text, password, submit
+     * @param string  - text, password, submit
      * @param label - the human readable name to display next to the input field.
      * @param value - the current value of the input field.
      * 
