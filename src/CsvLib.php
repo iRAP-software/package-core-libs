@@ -39,11 +39,17 @@ class CsvLib
             if ($lineIndex === 0)
             {
                 # this is the header line
-                $headers = str_getcsv($line);
+                $headers = str_getcsv(
+                    string: $line,
+                    escape: ""
+                );
             }
             else
             {
-                $data = str_getcsv($line);
+                $data = str_getcsv(
+                    string: $line,
+                    escape: ""
+                );
                 $obj = new \stdClass();
                 
                 foreach ($headers as $headerIndex => $header)
@@ -115,7 +121,7 @@ class CsvLib
         $output = array();
         $firstRow = true;
         
-        while ($row = fgetcsv($file))
+        while ($row = fgetcsv(stream: $file, escape: ""))
         {
             // Skip empty lines (users may accidentally put one at the end
             // libre calc wont strip this either.
@@ -204,13 +210,7 @@ class CsvLib
         
         if ($addHeader)
         {
-            fputcsv(
-                stream: $fileHandle,
-                fields: $keys,
-                separator: $delimiter,
-                enclosure: $enclosure,
-                escape: ""
-            );
+            fputcsv($fileHandle, $keys, $delimiter, $enclosure, "");
         }
         
         foreach ($rows as $index => $row)
@@ -249,13 +249,7 @@ class CsvLib
                 $rowOfValues[] = $value;
             }
             
-            fputcsv(
-                stream: $fileHandle,
-                fields: $rowOfValues,
-                separator: $delimiter,
-                enclosure: $enclosure,
-                escape: ""
-            );
+            fputcsv($fileHandle, $rowOfValues, $delimiter, $enclosure, "");
         }
     }
     
@@ -265,7 +259,7 @@ class CsvLib
      * This saves memory by working line by line rather than reading everything into memory
      * This will replace the existing file's contents, so if you need to keep that, make a copy
      * first.
-     * @param sring $filepath - the path to the CSV file we are trimming
+     * @param string $filepath - the path to the CSV file we are trimming
      * @param string $delimiter - the delimiter used in the CSV. E.g. ',' or ';'
      * @throws \Exception
      */
@@ -278,7 +272,11 @@ class CsvLib
         {
             while (!feof($uploaded_fh))
             { 
-                $lineArray = fgetcsv($uploaded_fh, 0, $delimiter);
+                $lineArray = fgetcsv(
+                    stream:$uploaded_fh,
+                    length: 0,
+                    separator: $delimiter,
+                    escape: "");
                 
                 if (!empty($lineArray))
                 {
@@ -326,7 +324,7 @@ class CsvLib
         {
             while (!feof($fileHandle))
             {
-                $lineArray = fgetcsv($fileHandle, 0, $delimiter, $enclosure);
+                $lineArray = fgetcsv($fileHandle, 0, $delimiter, $enclosure, "");
                 
                 if (!empty($lineArray))
                 {
@@ -345,13 +343,7 @@ class CsvLib
                         unset($lineArray[$columnIndex]);
                     }
                     
-                    fputcsv(
-                        stream: $tmpFile,
-                        fields: $lineArray,
-                        separator: $delimiter,
-                        enclosure: $enclosure,
-                        escape: ""
-                    );
+                    fputcsv($tmpFile, $lineArray, $delimiter, $enclosure, "");
                 }
                 
                 $lineNumber++;
@@ -387,19 +379,13 @@ class CsvLib
         {
             while (!feof($fileHandle))
             {
-                $lineArray = fgetcsv($fileHandle, 0, $delimiter, $enclosure);
+                $lineArray = fgetcsv($fileHandle, 0, $delimiter, $enclosure, "");
                 
                 if ($lineArray)
                 {
                     if (!in_array($lineNumber, $rowIndexes))
                     {
-                        fputcsv(
-                            stream: $tmpFile,
-                            fields: $lineArray,
-                            separator: $delimiter,
-                            enclosure: $enclosure,
-                            escape: ""
-                        );
+                        fputcsv($tmpFile, $lineArray, $delimiter, $enclosure, "");
                     }
                 }
                 
@@ -449,8 +435,8 @@ class CsvLib
         {
             while (!feof($fileHandle1))
             {
-                $lineArray1 = fgetcsv($fileHandle1, 0, $delimiter, $enclosure);
-                $lineArray2 = fgetcsv($fileHandle2, 0, $delimiter, $enclosure);
+                $lineArray1 = fgetcsv($fileHandle1, 0, $delimiter, $enclosure, "");
+                $lineArray2 = fgetcsv($fileHandle2, 0, $delimiter, $enclosure, "");
                 $resultArray = array();
                 
                 if ($lineArray1)
@@ -482,13 +468,7 @@ class CsvLib
                     }
                 }
                 
-                fputcsv(
-                    stream: $newFileHandle,
-                    fields: $resultArray,
-                    separator: $delimiter,
-                    enclosure: $enclosure,
-                    escape: ""
-                );
+                fputcsv($newFileHandle, $resultArray, $delimiter, $enclosure, "");
                 $lineNumber++;
             }
             
@@ -520,7 +500,7 @@ class CsvLib
      * @param bool $compareOtherColumns - optionally specify false to tell this function to ignore
      *                                    all the other columns and only compare the ones specified
      *                                    in the tolerances array.
-     * @param type $delimiter - optionally specify the delimiter to pass to fgetcsv (comma default)
+     * @param string $delimiter - optionally specify the delimiter to pass to fgetcsv (comma default)
      * @param string $enclosure - optionally specify the enclosure to pass to fgetcsv (default: ")
      * @return bool - true if the files are the same, false if different.
      * @throws \Exception
@@ -539,8 +519,8 @@ class CsvLib
         
         while (!feof($fileHandle1) && $hasFailed === FALSE)
         {
-            $lineArray1 = fgetcsv($fileHandle1, 0, $delimiter, $enclosure);
-            $lineArray2 = fgetcsv($fileHandle2, 0, $delimiter, $enclosure);
+            $lineArray1 = fgetcsv($fileHandle1, 0, $delimiter, $enclosure, "");
+            $lineArray2 = fgetcsv($fileHandle2, 0, $delimiter, $enclosure, "");
             
             if ($lineArray1)
             {
@@ -637,7 +617,7 @@ class CsvLib
                 throw new \Exception("Unable to read file for merging: {$filepath}");
             }
             
-            while (($fields = fgetcsv($readHandle, 0, $delimiter, $enclosure)) !== FALSE)
+            while (($fields = fgetcsv($readHandle, 0, $delimiter, $enclosure, "")) !== FALSE)
             {
                 $copyLineAcross = false;
                 
@@ -661,13 +641,7 @@ class CsvLib
                 
                 if ($copyLineAcross)
                 {
-                    fputcsv(
-                        stream: $outputFileHandle,
-                        fields: $fields,
-                        separator: $delimiter,
-                        enclosure: $enclosure,
-                        escape: ""
-                    );
+                    fputcsv($outputFileHandle, $fields, $delimiter, $enclosure, "");
                 }
             }
             
