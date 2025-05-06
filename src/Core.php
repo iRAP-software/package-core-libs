@@ -867,7 +867,7 @@ class Core
      */
     public static function getNumProcessors()
     {
-        $cmd = "cat /proc/cpuinfo | grep processor | wc -l";
+        $cmd = "nproc --all";
         $numProcessors = intval(shell_exec($cmd));
         return $numProcessors;
     }
