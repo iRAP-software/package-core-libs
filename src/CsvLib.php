@@ -163,7 +163,7 @@ class CsvLib
             }
         }
         
-        fclose($filepath);
+        fclose($file);
 
         return $output;
     }
